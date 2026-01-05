@@ -1,0 +1,30 @@
+name: Update Team Schedules
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6 AM
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  update-schedules:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Generate team schedules
+      run: |
+        python3 generate_schedules.py
+    
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add *.ics
+        git diff --staged --quiet || git commit -m "Update team schedules $(date)"
+        git push
