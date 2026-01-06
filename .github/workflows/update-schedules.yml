@@ -23,6 +23,9 @@ jobs:
         python-version: '3.x'
     
     - name: Generate team schedules
+      env:
+        TARGET_TEAMS: '{"F1R": ["HOOLIGANS"], "F2": ["SCREAMING MONKEYS"]}'
+        GITHUB_PAGES_URL: "https://iansym.github.io/pisa_ical"
       run: |
         python3 generate_schedules.py
     

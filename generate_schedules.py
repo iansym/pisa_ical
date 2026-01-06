@@ -2,49 +2,36 @@ import urllib.request
 import urllib.parse
 import re
 from datetime import datetime, timedelta
+from config import TARGET_TEAMS, VALID_SEASONS, ARENA_NAME, ARENA_ADDRESS, GITHUB_PAGES_URL
 
 # ============================================================================
-# CONFIGURATION - Edit these settings as needed
-# ============================================================================
-
-# Map divisions to specific teams (empty list = all teams in division)
-TARGET_TEAMS = {
-    'F1R': ['HOOLIGANS'],
-    'F2': ['SCREAMING MONKEYS']
-}
-
-# Valid seasons to process (case insensitive)
-VALID_SEASONS = ['winter', 'spring', 'summer', 'fall']
-
-# Arena information
-ARENA_NAME = "Plainville Indoor Sports Arena"
-ARENA_ADDRESS = "161 Woodford Ave Ste 59, Plainville, CT 06062, USA"
-
-# GitHub Pages base URL (update with your username/repo)
-GITHUB_PAGES_URL = "https://iansym.github.io/pisa_ical"
-
-# ============================================================================
-# MAIN SCRIPT - No need to edit below this line
+# MAIN SCRIPT - Configuration loaded from config.py
 # ============================================================================
 
 def get_latest_season():
-    """Get the most recent season from the current year"""
+    """Get the most recent season, trying current year, next year, then previous year"""
     current_year = datetime.now().year
-    url = f"https://plainvillearena.com/ajax_update.php?ddname=Year&iYearId={current_year}"
     
-    with urllib.request.urlopen(url) as response:
-        content = response.read().decode('utf-8')
+    # Try current year, next year, then previous year
+    for year in [current_year, current_year + 1, current_year - 1]:
+        url = f"https://plainvillearena.com/ajax_update.php?ddname=Year&iYearId={year}"
+        
+        try:
+            with urllib.request.urlopen(url) as response:
+                content = response.read().decode('utf-8')
+            
+            # Filter for standard seasons only
+            season_names = re.findall(r'<seasonname>([^<]+)</seasonname>', content)
+            season_ids = re.findall(r'<seasonid>([^<]+)</seasonid>', content)
+            
+            for season_id, season_name in zip(season_ids, season_names):
+                if season_name.lower() in VALID_SEASONS:
+                    print(f"Using {year} {season_name} season (ID: {season_id})")
+                    return season_id
+        except:
+            continue
     
-    # Filter for standard seasons only
-    season_names = re.findall(r'<seasonname>([^<]+)</seasonname>', content)
-    season_ids = re.findall(r'<seasonid>([^<]+)</seasonid>', content)
-    
-    valid_seasons = VALID_SEASONS
-    
-    for season_id, season_name in zip(season_ids, season_names):
-        if season_name.lower() in valid_seasons:
-            return season_id
-    
+    print("No valid seasons found, using fallback")
     return '95'  # fallback
 
 def get_divisions(season_id):
@@ -236,7 +223,7 @@ for division in sorted(divisions.keys()):
         html_content += f'''        <div style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 4px;">
             <strong>{division} - {team}</strong><br>
             <a href="{filename}" style="margin-right: 15px;">📥 Download</a>
-            <a href="{google_url}" target="_blank" style="margin-right: 15px;">📅 Add to Google Calendar</a>
+            <a href="https://calendar.google.com/calendar/render?cid={base_url}" target="_blank" style="margin-right: 15px;">📅 Add to Google Calendar</a>
             <a href="webcal://{base_url.replace('https://', '')}" style="margin-right: 15px;">🍎 Add to Apple Calendar</a>
             <small style="display: block; margin-top: 5px; color: #666;">Subscribe URL: {base_url}</small>
         </div>
