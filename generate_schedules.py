@@ -160,3 +160,54 @@ for division_id, division_name in all_divisions:
                     print(f"    Error generating {team}: {e}")
 
 print("\nDone! Generated calendars for all teams in target divisions.")
+
+# Generate index.html with actual teams found
+html_content = '''<!DOCTYPE html>
+<html>
+<head>
+    <title>Plainville Arena Team Schedules</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        .division { margin: 20px 0; }
+        .team-link { display: block; margin: 5px 0; padding: 8px; background: #f5f5f5; text-decoration: none; color: #333; border-radius: 4px; }
+        .team-link:hover { background: #e5e5e5; }
+    </style>
+</head>
+<body>
+    <h1>Plainville Arena Team Schedules</h1>
+    <p>Click links to download calendar files, or right-click and copy URL to subscribe in your calendar app.</p>
+    
+'''
+
+# Group generated files by division
+import os
+generated_files = [f for f in os.listdir('.') if f.endswith('.ics')]
+divisions = {}
+
+for filename in generated_files:
+    if '_' in filename:
+        division = filename.split('_')[0]
+        team = filename.replace('.ics', '').replace(f'{division}_', '').replace('_', ' ')
+        
+        if division not in divisions:
+            divisions[division] = []
+        divisions[division].append((team, filename))
+
+# Generate HTML for each division
+for division in sorted(divisions.keys()):
+    html_content += f'    <div class="division">\n        <h2>{division} Division</h2>\n'
+    
+    for team, filename in sorted(divisions[division]):
+        html_content += f'        <a href="{filename}" class="team-link">{division} - {team}</a>\n'
+    
+    html_content += '    </div>\n\n'
+
+html_content += '''    <p><small>Schedules update daily at 6 AM EST</small></p>
+</body>
+</html>'''
+
+with open('index.html', 'w') as f:
+    f.write(html_content)
+
+print("Updated index.html with generated teams")
