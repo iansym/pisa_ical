@@ -3,6 +3,30 @@ import urllib.parse
 import re
 from datetime import datetime, timedelta
 
+# ============================================================================
+# CONFIGURATION - Edit these settings as needed
+# ============================================================================
+
+# Map divisions to specific teams (empty list = all teams in division)
+TARGET_TEAMS = {
+    'F1R': ['HOOLIGANS'],
+    'F2': ['SCREAMING MONKEYS']
+}
+
+# Valid seasons to process (case insensitive)
+VALID_SEASONS = ['winter', 'spring', 'summer', 'fall']
+
+# Arena information
+ARENA_NAME = "Plainville Indoor Sports Arena"
+ARENA_ADDRESS = "161 Woodford Ave Ste 59, Plainville, CT 06062, USA"
+
+# GitHub Pages base URL (update with your username/repo)
+GITHUB_PAGES_URL = "https://iansym.github.io/pisa_ical"
+
+# ============================================================================
+# MAIN SCRIPT - No need to edit below this line
+# ============================================================================
+
 def get_latest_season():
     """Get the most recent season from the current year"""
     current_year = datetime.now().year
@@ -15,7 +39,7 @@ def get_latest_season():
     season_names = re.findall(r'<seasonname>([^<]+)</seasonname>', content)
     season_ids = re.findall(r'<seasonid>([^<]+)</seasonid>', content)
     
-    valid_seasons = ['winter', 'spring', 'summer', 'fall']
+    valid_seasons = VALID_SEASONS
     
     for season_id, season_name in zip(season_ids, season_names):
         if season_name.lower() in valid_seasons:
@@ -96,7 +120,7 @@ def get_team_schedule_ical(team_name, division_id, season_id, schedule_id):
                         f"DTSTART;TZID=America/New_York:{dt.strftime('%Y%m%dT%H%M%S')}",
                         f"DTEND;TZID=America/New_York:{end_dt.strftime('%Y%m%dT%H%M%S')}",
                         f"SUMMARY:{division} - {team_name}",
-                        f"LOCATION:Plainville Indoor Sports Arena, 161 Woodford Ave Ste 59, Plainville, CT 06062, USA",
+                        f"LOCATION:{ARENA_NAME}, {ARENA_ADDRESS}",
                         f"DESCRIPTION:{season} Season - {division} Division",
                         "END:VEVENT"
                     ])
@@ -206,7 +230,7 @@ for division in sorted(divisions.keys()):
     
     for team, filename in sorted(divisions[division]):
         # Create subscription URLs
-        base_url = f"https://iansym.github.io/pisa_ical/{filename}"
+        base_url = f"{GITHUB_PAGES_URL}/{filename}"
         google_url = f"https://calendar.google.com/calendar/render?cid={base_url}"
         
         html_content += f'''        <div style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 4px;">
