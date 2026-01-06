@@ -207,7 +207,7 @@ for division in sorted(divisions.keys()):
     for team, filename in sorted(divisions[division]):
         # Create subscription URLs
         base_url = f"https://iansym.github.io/pisa_ical/{filename}"
-        google_url = f"https://calendar.google.com/calendar/u/0/r?cid={base_url}"
+        google_url = f"https://calendar.google.com/calendar/render?cid={base_url}"
         
         html_content += f'''        <div style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 4px;">
             <strong>{division} - {team}</strong><br>
