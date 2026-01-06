@@ -176,7 +176,13 @@ html_content = '''<!DOCTYPE html>
 </head>
 <body>
     <h1>Plainville Arena Team Schedules</h1>
-    <p>Click links to download calendar files, or right-click and copy URL to subscribe in your calendar app.</p>
+    <p>Choose how to add calendars:</p>
+    <ul>
+        <li><strong>📥 Download</strong> - Download .ics file to import once</li>
+        <li><strong>📅 Google Calendar</strong> - Subscribe for automatic updates</li>
+        <li><strong>🍎 Apple Calendar</strong> - Subscribe for automatic updates</li>
+        <li><strong>Subscribe URL</strong> - Copy/paste into other calendar apps</li>
+    </ul>
     
 '''
 
@@ -199,7 +205,18 @@ for division in sorted(divisions.keys()):
     html_content += f'    <div class="division">\n        <h2>{division} Division</h2>\n'
     
     for team, filename in sorted(divisions[division]):
-        html_content += f'        <a href="{filename}" class="team-link">{division} - {team}</a>\n'
+        # Create subscription URLs
+        base_url = f"https://iansym.github.io/pisa_ical/{filename}"
+        google_url = f"https://calendar.google.com/calendar/u/0/r?cid={base_url}"
+        
+        html_content += f'''        <div style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 4px;">
+            <strong>{division} - {team}</strong><br>
+            <a href="{filename}" style="margin-right: 15px;">📥 Download</a>
+            <a href="{google_url}" target="_blank" style="margin-right: 15px;">📅 Add to Google Calendar</a>
+            <a href="webcal://{base_url.replace('https://', '')}" style="margin-right: 15px;">🍎 Add to Apple Calendar</a>
+            <small style="display: block; margin-top: 5px; color: #666;">Subscribe URL: {base_url}</small>
+        </div>
+'''
     
     html_content += '    </div>\n\n'
 
