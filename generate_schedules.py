@@ -25,6 +25,7 @@ def get_latest_season():
             season_ids = re.findall(r'<seasonid>([^<]+)</seasonid>', content)
             
             for season_id, season_name in zip(season_ids, season_names):
+                print(f"Checking {season_name} ({season_id})")
                 if season_name.lower() in VALID_SEASONS:
                     print(f"Using {year} {season_name} season (ID: {season_id})")
                     return season_id
