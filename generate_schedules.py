@@ -141,7 +141,7 @@ print(f"Found {len(all_divisions)} divisions")
 
 # Process target divisions
 for division_id, division_name in all_divisions:
-    if division_name in TARGET_TEAMS:
+    if division_name.strip() in TARGET_TEAMS:
         print(f"\nProcessing {division_name} (ID: {division_id})")
         
         # Get schedules for this division
