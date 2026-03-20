@@ -160,7 +160,7 @@ for division_id, division_name in all_divisions:
             print(f"  Found {len(teams)} teams")
             
             # Generate calendar for specified teams in this division
-            target_teams_for_division = TARGET_TEAMS[division_name]
+            target_teams_for_division = TARGET_TEAMS[division_name.strip()]
             
             for team in teams:
                 # Skip if specific teams specified and this team not in list
@@ -169,7 +169,7 @@ for division_id, division_name in all_divisions:
                     
                 try:
                     ical_data = get_team_schedule_ical(team, division_id, season_id, schedule_id)
-                    filename = f'{division_name}_{team.replace(" ", "_")}.ics'
+                    filename = f'{division_name.strip()}_{team.replace(" ", "_")}.ics'
                     
                     with open(filename, 'w') as f:
                         f.write(ical_data)
