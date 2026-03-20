@@ -15,6 +15,7 @@ def get_latest_season():
     # Try current year, next year, then previous year
     for year in [current_year, current_year + 1, current_year - 1]:
         url = f"https://plainvillearena.com/ajax_update.php?ddname=Year&iYearId={year}"
+        print(url)
         
         try:
             with urllib.request.urlopen(url) as response:
@@ -39,6 +40,7 @@ def get_latest_season():
 def get_divisions(season_id):
     """Get all divisions for a season"""
     url = f"https://plainvillearena.com/getdivision.php?seasonid={season_id}"
+    print(url)
     
     with urllib.request.urlopen(url) as response:
         content = response.read().decode('utf-8')
@@ -50,6 +52,7 @@ def get_divisions(season_id):
 def get_schedules(division_id):
     """Get schedules for a division"""
     url = f"https://plainvillearena.com/sspanel/getSchedule.php?divid={division_id}"
+    print(url)
     
     with urllib.request.urlopen(url) as response:
         content = response.read().decode('utf-8')
@@ -61,6 +64,7 @@ def get_schedules(division_id):
 def get_teams(division_id, schedule_id):
     """Get all teams for a division/schedule"""
     url = f"https://plainvillearena.com/sspanel/getTeam.php?divisionid={division_id}&scheduleid={schedule_id}"
+    print(url)
     
     with urllib.request.urlopen(url) as response:
         content = response.read().decode('utf-8')
@@ -81,6 +85,7 @@ def get_team_schedule_ical(team_name, division_id, season_id, schedule_id):
     }
     
     encoded_data = urllib.parse.urlencode(data).encode('utf-8')
+    print(encoded_data)
     req = urllib.request.Request('https://plainvillearena.com/schedules.html', data=encoded_data, method='POST')
     
     with urllib.request.urlopen(req) as response:
