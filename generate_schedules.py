@@ -28,7 +28,8 @@ def get_latest_season():
                 print(f"Checking {season_name} ({season_id})")
                 if season_name.lower() in VALID_SEASONS:
                     print(f"Using {year} {season_name} season (ID: {season_id})")
-                    return season_id
+                    
+            return season_id
         except:
             continue
     
