@@ -90,6 +90,7 @@ def get_team_schedule_ical(team_name, division_id, season_id, schedule_id):
     
     with urllib.request.urlopen(req) as response:
         csv_content = response.read().decode('utf-8')
+    print(csv_content)
     
     lines = csv_content.strip().split('\n')
     ical_content = ["BEGIN:VCALENDAR", "VERSION:2.0", f"PRODID:-//{team_name} Schedule//EN"]
